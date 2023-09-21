@@ -98,6 +98,7 @@ extension Gallery {
                         }
                     } else {
                         status
+                            .frame(maxWidth: .infinity, maxHeight: .infinity)
                     }
                 }
                 .toolbar {
