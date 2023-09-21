@@ -53,7 +53,15 @@ let package = Package(
             url: "https://github.com/supabase/supabase-swift.git",
             from: "0.3.0"
         ),
-        .package(url: "https://github.com/kean/Nuke.git", from: "12.1.6")
+        .package(url: "https://github.com/kean/Nuke.git", from: "12.1.6"),
+        .package(
+            url: "https://github.com/Alamofire/Alamofire.git", 
+                .upToNextMajor(from: "5.7.1")
+        ),
+        .package(
+            url: "https://github.com/apple/swift-async-algorithms.git",
+            from: "0.1.0"
+        ),
     ],
     targets: [
         // Targets are the basic building blocks of a package, defining a module or a test suite.
@@ -82,6 +90,14 @@ let package = Package(
         ),
         .target(
             name: "Model"
+        ),
+        .target(
+            name: "Networking",
+            dependencies: [
+                .product(name: "ComposableArchitecture", package: "swift-composable-architecture"),
+                .product(name: "Alamofire", package: "Alamofire"),
+                .product(name: "AsyncAlgorithms", package: "swift-async-algorithms")
+            ]
         ),
         .target(
             name: "Platform",
