@@ -32,18 +32,27 @@ struct Gallery: Reducer {
 
     struct State: Equatable {
         var assets: IdentifiedArrayOf<Asset> = []
+        
+        var requestInFlight = false
         var error = false
 
         @BindingState var imageSelection: PhotosPickerItem? = nil
         @PresentationState var detail: Detail.State?
+        @PresentationState var alert: AlertState<Action.Alert>?
 
         @BindingState var currentDetailID: Asset.ID?
     }
 
     enum Action: BindableAction {
+
+        enum Alert {
+            case tappedOkay
+        }
+
         case binding(BindingAction<State>)
 
         case detail(PresentationAction<Detail.Action>)
+        case alert(PresentationAction<Alert>)
 
         case loadAssets
         case handleLoadAssets(TaskResult<IdentifiedArrayOf<Asset>>)
@@ -51,6 +60,9 @@ struct Gallery: Reducer {
         case stageImages([PlatformImage])
 
         case tappedAsset(Asset)
+        case tappedDeleteAsset(Asset)
+
+        case handleDeleteAssets(TaskResult<Void>)
     }
 
     @Dependency(\.uuid) var uuid
@@ -74,6 +86,7 @@ struct Gallery: Reducer {
                         return
                     }
 
+                    await send(.binding(.set(\.$imageSelection, nil)))
                     // send it to staging
                     await send(.stageImages([image]))
                 }
@@ -85,13 +98,15 @@ struct Gallery: Reducer {
                 }
 
             case .loadAssets:
+                state.requestInFlight = true
                 return .run { send in
                     await send(
                         .handleLoadAssets(
                             TaskResult {
                                 try await assets.list()
                             }
-                        )
+                        ),
+                        animation: .default
                     )
                 }
 
@@ -99,12 +114,11 @@ struct Gallery: Reducer {
                 switch result {
                 case .success(let items):
                     state.assets = items
-                    return .none
-
                 case .failure:
                     state.error = true
-                    return .none
                 }
+                state.requestInFlight = false
+                return .none
 
             case .stageImages(let images):
                 state.detail = .imageStaging(
@@ -126,10 +140,40 @@ struct Gallery: Reducer {
                 haptics.interaction()
                 return .none
 
+            case .tappedDeleteAsset(let asset):
+                return .run { send in
+                    await send(
+                        .handleDeleteAssets(
+                            TaskResult {
+                                try await assets.deleteAsset(asset.id)
+                            }
+                        ),
+                        animation: .default
+                    )
+                }
+
+            case .handleDeleteAssets(.success):
+                return .send(.loadAssets)
+
+            case .handleDeleteAssets(.failure):
+
+                state.alert = AlertState {
+                    TextState("")
+                } actions: {
+                    ButtonState(role: .cancel) {
+                        TextState("Cancel")
+                    }
+                } message: {
+                    TextState("Delete failed. Try again later.")
+                }
+
+                return .none
+
             default:
                 return .none
             }
         }
+        .ifLet(\.$alert, action: /Action.alert)
         .ifLet(\.$detail, action: /Action.detail) {
             Detail()
         }

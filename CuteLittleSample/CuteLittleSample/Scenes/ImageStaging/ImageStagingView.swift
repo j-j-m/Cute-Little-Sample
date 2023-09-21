@@ -34,6 +34,8 @@ extension ImageStaging {
                                 ProgressView(progress)
                                     .transition(.opacity.animation(.easeInOut))
                             } else {
+                                Text("Confirm")
+                                    .font(.title)
                                 Spacer()
                                 Button {
                                     dismiss()

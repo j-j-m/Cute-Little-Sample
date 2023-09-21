@@ -77,7 +77,7 @@ extension AssetClient {
         }
 
         client.createAssetUpload = { id, file in
-            let path = "\(id)/\(file.fileName)"
+            let path = file.fileName
 
             // the usual scenario for this is for logged in users.
             // unfortunately supabase tries to authenticate each invocation request.

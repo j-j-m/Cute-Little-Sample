@@ -25,48 +25,80 @@ extension Gallery {
             self.store = store
         }
 
+        var status: some View {
+            WithViewStore(store, observe: { $0 }) { viewStore in
+                VStack {
+                    if viewStore.requestInFlight {
+                        ProgressView()
+                    } else if viewStore.error {
+                        Text("Something went wrong.")
+                    } else {
+                        Text("Nothing here. Add some images...")
+                    }
+                }
+            }
+        }
+
         var body: some View {
             WithViewStore(store, observe: { $0 }) { viewStore in
-                ScrollView {
-                    MasonryVStack(
-                        columns: horizontalSizeClass == .compact ? 2 : 3,
-                        spacing: 10
-                    ){
-                        ForEach(viewStore.assets) { asset in
-                            Button {
-                                store.send(.tappedAsset(asset), animation: .easeIn)
-                            } label: {
-                                VStack {
-                                    AssetImageView(asset: asset)
-                                        .cornerRadius(10)
+                ZStack {
+                    if viewStore.assets.isEmpty == false {
+                        ScrollView {
+                            MasonryVStack(
+                                columns: horizontalSizeClass == .compact ? 2 : 3,
+                                spacing: 10
+                            ){
+                                ForEach(viewStore.assets) { asset in
+                                    Button {
+                                        store.send(.tappedAsset(asset), animation: .easeIn)
+                                    } label: {
+                                        VStack {
+                                            AssetImageView(asset: asset)
+                                                .cornerRadius(10)
+                                        }
+                                    }
+                                    .composableStyle(
+                                        scalingButtonStyle
+                                    )
+                                    .transition(.opacity.animation(.easeIn))
+                                    .contextMenu {
+                                        Button {
+                                            store.send(.tappedDeleteAsset(asset))
+                                        } label: {
+                                            Label {
+                                                Text("Delete")
+                                            } icon: {
+                                                Image(systemName: "trash")
+                                            }
+                                        }
+
+                                    }
+                                    .inContext {
+#if os(macOS)
+                                        $0.sheet(
+                                            isPresented: viewStore.$currentDetailID
+                                                .isPresentAndEqual(to: asset.id)
+                                        ) {
+                                            AssetDetail.ContentView(asset: asset)
+                                                .platformConstrained()
+                                        }
+#else
+                                        $0.presentation(
+                                            transition: .heroMove,
+                                            isPresented: viewStore.$currentDetailID
+                                                .isPresentAndEqual(to: asset.id)
+                                        ) {
+                                            AssetDetail.ContentView(asset: asset)
+                                        }
+#endif
+                                    }
                                 }
                             }
-                            .composableStyle(
-                                scalingButtonStyle
-                            )
-                            .transition(.opacity.animation(.easeIn))
-                            .inContext {
-                                #if os(macOS)
-                                $0.sheet(
-                                    isPresented: viewStore.$currentDetailID
-                                        .isPresentAndEqual(to: asset.id)
-                                ) {
-                                    AssetDetail.ContentView(asset: asset)
-                                        .platformConstrained()
-                                }
-                                #else
-                                $0.presentation(
-                                    transition: .heroMove,
-                                    isPresented: viewStore.$currentDetailID
-                                        .isPresentAndEqual(to: asset.id)
-                                ) {
-                                    AssetDetail.ContentView(asset: asset)
-                                }
-                                #endif
-                            }
+                            .padding(10)
                         }
+                    } else {
+                        status
                     }
-                    .padding(10)
                 }
                 .toolbar {
                     ToolbarItemGroup {
@@ -119,6 +151,9 @@ extension Gallery {
                     ImageStaging.ContentView(store: $0)
                         .platformConstrained()
                 }
+                .alert(
+                    store: self.store.scope(state: \.$alert, action: { .alert($0) })
+                )
                 .task {
                     store.send(.loadAssets)
                 }
