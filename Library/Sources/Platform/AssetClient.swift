@@ -18,7 +18,7 @@ public struct AssetClient {
 
     public var createAssetUpload: @Sendable (UUID, StorageClient.UploadRequest.File) async throws -> AsyncThrowingStream<AssetUploadEvent, Error> = unimplemented("\(Self.self).createAssetUpload")
 
-    public var deleteAsset: @Sendable (Asset.ID) async throws -> Void = unimplemented("\(Self.self).deleteAsset")
+    public var deleteAsset: @Sendable (Asset.ID) async throws -> Asset = unimplemented("\(Self.self).deleteAsset")
 
     public init() { }
 }
@@ -125,7 +125,10 @@ extension AssetClient {
                 .from("asset")
                 .delete()
                 .eq(column: "id", value: assetId)
+                .select()
+                .single()
                 .execute()
+                .value
         }
 
         return client

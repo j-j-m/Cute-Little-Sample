@@ -63,7 +63,7 @@ struct Gallery: Reducer {
         case tappedAsset(Asset)
         case tappedDeleteAsset(Asset)
 
-        case handleDeleteAssets(TaskResult<Void>)
+        case handleDeleteAssets(TaskResult<Asset>)
     }
 
     @Dependency(\.analytics) var analytics
