@@ -37,6 +37,7 @@ struct Gallery: Reducer {
 
     struct State: Equatable {
         var assets: IdentifiedArrayOf<Asset> = []
+        var error = false
 
         @BindingState var imageSelection: PhotosPickerItem? = nil
         @PresentationState var detail: Detail.State?
@@ -44,13 +45,20 @@ struct Gallery: Reducer {
 
     enum Action: BindableAction {
         case binding(BindingAction<State>)
+
         case detail(PresentationAction<Detail.Action>)
+
+        case loadAssets
+        case handleLoadAssets(TaskResult<IdentifiedArrayOf<Asset>>)
+
         case stageImages([PlatformImage])
 
         case tappedAsset(Asset)
     }
 
     @Dependency(\.uuid) var uuid
+    @Dependency(\.assets) var assets
+    @Dependency(\.haptics) var haptics
 
     var body: some Reducer<State, Action> {
 
@@ -73,8 +81,33 @@ struct Gallery: Reducer {
                     await send(.stageImages([image]))
                 }
 
-            case .detail:
-                return .none
+            case .detail(.presented(.imageStaging(.finishedUploading))):
+                state.detail = nil
+                return .run { send in
+                    await send(.loadAssets)
+                }
+
+            case .loadAssets:
+                return .run { send in
+                    await send(
+                        .handleLoadAssets(
+                            TaskResult {
+                                try await assets.list()
+                            }
+                        )
+                    )
+                }
+
+            case .handleLoadAssets(let result):
+                switch result {
+                case .success(let items):
+                    state.assets = items
+                    return .none
+
+                case .failure:
+                    state.error = true
+                    return .none
+                }
 
             case .stageImages(let images):
                 state.detail = .imageStaging(
@@ -88,6 +121,7 @@ struct Gallery: Reducer {
 
             case .tappedAsset(let asset):
                 state.detail = .assetDetail(.init(asset: asset))
+                haptics.interaction()
                 return .none
 
             default:

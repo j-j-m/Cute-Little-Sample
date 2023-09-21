@@ -30,11 +30,16 @@ extension ImageStaging {
 
                     VStack(spacing: 0) {
                         HStack {
-                            Spacer()
-                            Button {
-                                dismiss()
-                            } label: {
-                                Image(systemName: "xmark")
+                            if let progress = viewStore.uploadProgress {
+                                ProgressView(progress)
+                                    .transition(.opacity.animation(.easeInOut))
+                            } else {
+                                Spacer()
+                                Button {
+                                    dismiss()
+                                } label: {
+                                    Image(systemName: "xmark")
+                                }
                             }
                         }
                         .padding()
@@ -47,7 +52,7 @@ extension ImageStaging {
                         HStack {
                             Spacer()
                             Button {
-
+                                store.send(.confirm)
                             } label: {
                                 Label {
                                     Text("Upload")

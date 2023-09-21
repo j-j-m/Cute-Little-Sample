@@ -43,8 +43,8 @@ extension Gallery {
                             }
                             .composableStyle(
                                 scalingButtonStyle
-                                >>> hapticButtonStyle
                             )
+                            .defersSystemGestures(on: [])
                             .transition(.opacity.animation(.easeIn))
 
                         }
@@ -109,6 +109,9 @@ extension Gallery {
                 ) {
                     ImageStaging.ContentView(store: $0)
                         .platformConstrained()
+                }
+                .task {
+                    store.send(.loadAssets)
                 }
             }
         }

@@ -22,22 +22,24 @@ public struct Asset: Codable, Hashable, Identifiable {
     }
 }
 
-public struct NewAsset: Codable, Equatable {
-    public let bucketId: String
-    public let path: String
-    public let fileType: String
-//    let metadata: [String: AnyCodable]? // Using AnyCodable to handle arbitrary JSON data
+extension Asset {
+    public struct Insert: Codable, Equatable {
+        public let bucketId: String
+        public let path: String
+        public let fileType: String
+    //    let metadata: [String: AnyCodable]? // Using AnyCodable to handle arbitrary JSON data
 
-    public enum CodingKeys: String, CodingKey {
-        case bucketId = "bucket_id"
-        case path
-        case fileType = "file_type"
-    }
+        public enum CodingKeys: String, CodingKey {
+            case bucketId = "bucket_id"
+            case path
+            case fileType = "file_type"
+        }
 
-    public init(bucketId: String, path: String, fileType: String) {
-        self.bucketId = bucketId
-        self.path = path
-        self.fileType = fileType
+        public init(bucketId: String, path: String, fileType: String) {
+            self.bucketId = bucketId
+            self.path = path
+            self.fileType = fileType
+        }
     }
 }
 
