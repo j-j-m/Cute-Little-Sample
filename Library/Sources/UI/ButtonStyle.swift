@@ -133,3 +133,21 @@ public func hapticButtonStyle<A: View>(_ configuration: ButtonStyleConfiguration
             haptics.interaction()
         }
 }
+
+public struct CircularMaterialButtonStyle: ButtonStyle {
+
+    public init() { }
+
+    public func makeBody(configuration: Configuration) -> some View {
+        configuration.label
+            .padding()
+            .foregroundColor(.primary)  // Set your desired color here
+            .background(
+                Circle()
+                .fill(Material.ultraThin)
+            )
+            .opacity(configuration.isPressed ? 0.9 : 1.0)
+            .scaleEffect(configuration.isPressed ? 0.9 : 1.0)
+            .animation(.interactiveSpring(), value: configuration.isPressed)
+    }
+}
