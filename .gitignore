@@ -1,0 +1,95 @@
+# Xcode
+##
+build/
+DerivedData/
+*.pbxuser
+!default.pbxuser
+*.mode1v3
+!default.mode1v3
+*.mode2v3
+!default.mode2v3
+*.perspectivev3
+!default.perspectivev3
+xcuserdata/
+*.xccheckout
+*.moved-aside
+*.xcuserstate
+
+# Objective-C/Swift specific
+##
+*.hmap
+*.ipa
+*.dSYM.zip
+*.dSYM
+
+# AppCode
+##
+.idea/
+
+# Other tools
+##
+*.swp
+*.swo
+*.swn
+*.moved-aside.d
+
+# CocoaPods
+##
+Pods/
+# If using CocoaPods to manage dependencies, uncomment:
+# Podfile.lock
+
+# Carthage
+##
+Carthage/Build
+carthage-archives/
+
+# Swift Package Manager
+##
+.build/
+Packages/
+Package.resolved
+
+# WatchOS temporary folders
+##
+*.gpx
+
+# macOS
+##
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Thumbnails
+._*
+
+# Files that might appear on external disk
+.Spotlight-V100
+.Trashes
+
+# Directories potentially created on remote AFP share
+.AppleDB
+.AppleDesktop
+Network Trash Folder
+Temporary Items
+.apdisk
+
+# JetBrains IDE
+.idea/
+
+# VSCode
+.vscode/
+
+# Fastlane
+fastlane/report.xml
+fastlane/Preview.html
+fastlane/screenshots/**/*.png
+fastlane/test_output
+
+# AppCode
+.idea/
+
+# Other
+*.moved-aside
+*.xccheckout
+*.xcuserstate
