@@ -6,6 +6,7 @@
 //
 
 import ComposableArchitecture
+import Analytics
 
 struct Application: Reducer {
     struct State: Equatable {
@@ -13,13 +14,18 @@ struct Application: Reducer {
     }
 
     enum Action {
+        case setup
         case stack(StackAction<Path.State, Path.Action>)
     }
+
+    @Dependency(\.analytics) var analytics
 
     var body: some Reducer<State, Action> {
         EmptyReducer()
             .forEach(\.stack, action: /Action.stack) {
                 Path()
             }
+
+        analyticsReducer
     }
 }

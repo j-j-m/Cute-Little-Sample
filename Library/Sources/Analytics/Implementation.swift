@@ -35,6 +35,11 @@
 
 import Foundation
 import os
+import CustomDump
+
+enum Log {
+    static let subsystem: String = "com.jjm.analytics"
+}
 
 private let logger = Logger(subsystem: Log.subsystem,
                             category: "AnalyticsClient")
@@ -48,11 +53,12 @@ extension AnalyticsClient {
 
         client.identify = { userId in
 
-            logger.debug("Identified with \(userId)")
+            logger.debug("Identified with \(userId ?? "nil")")
         }
 
         client.track = { event in
-            logger.debug("Tracked event \(event)")
+            let dump = String(customDumping: event)
+            logger.debug("Tracked event \(dump)")
         }
 
        return client

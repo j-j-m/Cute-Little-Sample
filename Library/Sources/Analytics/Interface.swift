@@ -53,7 +53,8 @@ extension DependencyValues {
     }
 
     private enum AnalyticsClientKey: DependencyKey {
-        static let liveValue: AnalyticsClient = .live
+        static let liveValue: AnalyticsClient = .dummy
+        
         public static let testValue: AnalyticsClient = {
             var client = AnalyticsClient()
             client.configure = { }

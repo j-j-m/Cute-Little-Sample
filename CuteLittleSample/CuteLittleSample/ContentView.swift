@@ -38,6 +38,9 @@ extension Application {
                 .padding()
                 .navigationTitle("Cute Little Sample")
             }
+            .task {
+                store.send(.setup)
+            }
         }
     }
 }

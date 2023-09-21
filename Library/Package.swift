@@ -12,6 +12,10 @@ let package = Package(
     products: [
         // Products define the executables and libraries a package produces, making them visible to other packages.
         .library(
+            name: "Analytics",
+            targets: ["Analytics"]
+        ),
+        .library(
             name: "Haptics",
             targets: ["Haptics"]
         ),
@@ -66,10 +70,20 @@ let package = Package(
             url: "https://github.com/nathantannar4/Transmission.git",
             from: "0.1.25"
         ),
+        .package(
+            url: "https://github.com/pointfreeco/swift-custom-dump.git",
+            from: "1.1.0"
+        )
     ],
     targets: [
         // Targets are the basic building blocks of a package, defining a module or a test suite.
         // Targets can depend on other targets in this package and products from dependencies.
+        .target(
+            name: "Analytics",
+            dependencies: [
+                .product(name: "Dependencies", package: "swift-dependencies"),
+            ]
+        ),
         .target(
             name: "Haptics",
             dependencies: [
@@ -82,6 +96,8 @@ let package = Package(
             dependencies: [
                 .product(name: "ComposableArchitecture", package: "swift-composable-architecture"),
                 .product(name: "Dependencies", package: "swift-dependencies"),
+                .product(name: "CustomDump", package: "swift-custom-dump"),
+                "Analytics",
                 "Model",
                 "Platform",
                 "UI",

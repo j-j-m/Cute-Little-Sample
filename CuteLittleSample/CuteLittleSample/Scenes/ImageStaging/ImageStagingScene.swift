@@ -17,7 +17,7 @@ struct ImageStaging: Reducer {
         var uploadProgress: Progress?
     }
 
-    enum Action {
+    enum Action: Equatable {
         case confirm
 
         case uploadImages([PlatformImage])
