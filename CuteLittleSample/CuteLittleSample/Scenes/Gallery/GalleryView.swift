@@ -97,15 +97,19 @@ extension Gallery {
                 .sheet(
                     store: store.scope(state: \.$detail, action: { .detail($0) }),
                     state: /Detail.State.assetDetail,
-                    action: Detail.Action.assetDetail,
-                    content: AssetDetail.ContentView.init(store:)
-                )
+                    action: Detail.Action.assetDetail
+                ) {
+                    AssetDetail.ContentView(store: $0)
+                        .platformConstrained()
+                }
                 .sheet(
                     store: store.scope(state: \.$detail, action: { .detail($0) }),
                     state: /Detail.State.imageStaging,
-                    action: Detail.Action.imageStaging,
-                    content: ImageStaging.ContentView.init(store:)
-                )
+                    action: Detail.Action.imageStaging
+                ) {
+                    ImageStaging.ContentView(store: $0)
+                        .platformConstrained()
+                }
             }
         }
     }

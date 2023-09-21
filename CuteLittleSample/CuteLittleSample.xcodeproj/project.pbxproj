@@ -20,6 +20,7 @@
 		A071C9622ABBF30900CEFF7F /* AssetDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A071C9612ABBF30900CEFF7F /* AssetDetailView.swift */; };
 		A071C9652ABBF70A00CEFF7F /* ImageStagingScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = A071C9642ABBF70A00CEFF7F /* ImageStagingScene.swift */; };
 		A071C9672ABBF71600CEFF7F /* ImageStagingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A071C9662ABBF71600CEFF7F /* ImageStagingView.swift */; };
+		A0E6C6F32ABC021800E0919B /* ViewExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0E6C6F22ABC021800E0919B /* ViewExtensions.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -38,6 +39,7 @@
 		A071C9612ABBF30900CEFF7F /* AssetDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AssetDetailView.swift; sourceTree = "<group>"; };
 		A071C9642ABBF70A00CEFF7F /* ImageStagingScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageStagingScene.swift; sourceTree = "<group>"; };
 		A071C9662ABBF71600CEFF7F /* ImageStagingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageStagingView.swift; sourceTree = "<group>"; };
+		A0E6C6F22ABC021800E0919B /* ViewExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewExtensions.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -81,6 +83,7 @@
 				A071C93F2ABBC37600CEFF7F /* Assets.xcassets */,
 				A071C9412ABBC37600CEFF7F /* CuteLittleSample.entitlements */,
 				A071C9422ABBC37600CEFF7F /* Preview Content */,
+				A0E6C6F22ABC021800E0919B /* ViewExtensions.swift */,
 			);
 			path = CuteLittleSample;
 			sourceTree = "<group>";
@@ -210,6 +213,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A0E6C6F32ABC021800E0919B /* ViewExtensions.swift in Sources */,
 				A071C95D2ABBE25300CEFF7F /* Application.swift in Sources */,
 				A071C9652ABBF70A00CEFF7F /* ImageStagingScene.swift in Sources */,
 				A071C9582ABBD6F400CEFF7F /* GalleryView.swift in Sources */,

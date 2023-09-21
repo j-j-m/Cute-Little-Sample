@@ -15,11 +15,16 @@ struct ImageStaging: Reducer {
     }
 
     enum Action {
-
+        case confirm
     }
 
     var body: some Reducer<State, Action> {
 
-        EmptyReducer()
+        Reduce { state, action in
+            switch action {
+            case .confirm:
+                return .none
+            }
+        }
     }
 }
