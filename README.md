@@ -10,4 +10,5 @@ This project contains a number of code samples from various projects brought tog
   
   - Supabase edge functions, to facilitate upload url generation and trigger on asset delete
 
-
+    Tested on Version 15.0 beta 7 (15A5229h) and iOS 17
+    
