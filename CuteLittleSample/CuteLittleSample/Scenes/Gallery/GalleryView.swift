@@ -33,16 +33,14 @@ extension Gallery {
                         spacing: 10
                     ){
                         ForEach(viewStore.assets) { asset in
-                            NavigationLink(
-                                state: Path.State.assetDetail(
-                                    .init(asset: asset)
-                                ),
-                                label: {
-                                    VStack {
-                                        AssetImageView(asset: asset)
-                                            .cornerRadius(10)
-                                    }
-                                })
+                            Button {
+                                store.send(.tappedAsset(asset))
+                            } label: {
+                                VStack {
+                                    AssetImageView(asset: asset)
+                                        .cornerRadius(10)
+                                }
+                            }
                             .composableStyle(
                                 scalingButtonStyle
                                 >>> hapticButtonStyle
@@ -96,6 +94,18 @@ extension Gallery {
                         }
                     }
                 }
+                .sheet(
+                    store: store.scope(state: \.$detail, action: { .detail($0) }),
+                    state: /Detail.State.assetDetail,
+                    action: Detail.Action.assetDetail,
+                    content: AssetDetail.ContentView.init(store:)
+                )
+                .sheet(
+                    store: store.scope(state: \.$detail, action: { .detail($0) }),
+                    state: /Detail.State.imageStaging,
+                    action: Detail.Action.imageStaging,
+                    content: ImageStaging.ContentView.init(store:)
+                )
             }
         }
     }

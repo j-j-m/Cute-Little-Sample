@@ -4,21 +4,15 @@ import ComposableArchitecture
 struct Path: Reducer {
     enum State: Equatable {
         case gallery(Gallery.State)
-        case assetDetail(AssetDetail.State)
     }
 
     enum Action {
         case gallery(Gallery.Action)
-        case assetDetail(AssetDetail.Action)
     }
 
     var body: some Reducer<State, Action> {
         Scope(state: /State.gallery, action: /Action.gallery) {
             Gallery()
-        }
-
-        Scope(state: /State.assetDetail, action: /Action.assetDetail) {
-            AssetDetail()
         }
     }
 }
@@ -45,13 +39,6 @@ struct StackNavWrapperView<Content: View>: View {
                         /Path.State.gallery,
                          action: Path.Action.gallery,
                          then: Gallery.ContentView.init(store:)
-                    )
-
-                case .assetDetail:
-                    CaseLet(
-                        /Path.State.assetDetail,
-                         action: Path.Action.assetDetail,
-                         then: AssetDetail.ContentView.init(store:)
                     )
                 }
             }

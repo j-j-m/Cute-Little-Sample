@@ -10,6 +10,5 @@ extension ImageStaging {
         var body: some View {
             Color.red
         }
-
     }
 }
