@@ -62,6 +62,10 @@ let package = Package(
             url: "https://github.com/apple/swift-async-algorithms.git",
             from: "0.1.0"
         ),
+        .package(
+            url: "https://github.com/nathantannar4/Transmission.git",
+            from: "0.1.25"
+        ),
     ],
     targets: [
         // Targets are the basic building blocks of a package, defining a module or a test suite.
@@ -114,6 +118,7 @@ let package = Package(
             dependencies: [
                 .product(name: "Dependencies", package: "swift-dependencies"),
                 .product(name: "NukeUI", package: "Nuke"),
+                .product(name: "Transmission", package: "Transmission", condition: .when(platforms: [.iOS])),
                 "Haptics",
                 "Platform",
                 "Model",

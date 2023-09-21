@@ -15,19 +15,14 @@ struct Gallery: Reducer {
 
     public struct Detail: Reducer {
         public enum State: Equatable{
-            case assetDetail(AssetDetail.State)
             case imageStaging(ImageStaging.State)
         }
 
         public enum Action  {
-            case assetDetail(AssetDetail.Action)
             case imageStaging(ImageStaging.Action)
         }
 
         public var body: some Reducer<State, Action> {
-            Scope(state: /State.assetDetail, action: /Action.assetDetail) {
-                AssetDetail()
-            }
 
             Scope(state: /State.imageStaging, action: /Action.imageStaging) {
                 ImageStaging()
@@ -41,6 +36,8 @@ struct Gallery: Reducer {
 
         @BindingState var imageSelection: PhotosPickerItem? = nil
         @PresentationState var detail: Detail.State?
+
+        @BindingState var currentDetailID: Asset.ID?
     }
 
     enum Action: BindableAction {
@@ -120,7 +117,12 @@ struct Gallery: Reducer {
                 return .none
 
             case .tappedAsset(let asset):
-                state.detail = .assetDetail(.init(asset: asset))
+
+                // ideally we would set present this scene in this fashion, but currently it doesnt not work.
+                // most likely an issue with the Transmission library.
+//                state.detail = .assetDetail(.init(asset: asset))
+
+                state.currentDetailID = asset.id
                 haptics.interaction()
                 return .none
 

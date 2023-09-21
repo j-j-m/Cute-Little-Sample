@@ -34,7 +34,7 @@ extension Gallery {
                     ){
                         ForEach(viewStore.assets) { asset in
                             Button {
-                                store.send(.tappedAsset(asset))
+                                store.send(.tappedAsset(asset), animation: .easeIn)
                             } label: {
                                 VStack {
                                     AssetImageView(asset: asset)
@@ -44,9 +44,26 @@ extension Gallery {
                             .composableStyle(
                                 scalingButtonStyle
                             )
-                            .defersSystemGestures(on: [])
                             .transition(.opacity.animation(.easeIn))
-
+                            .inContext {
+                                #if os(macOS)
+                                $0.sheet(
+                                    isPresented: viewStore.$currentDetailID
+                                        .isPresentAndEqual(to: asset.id)
+                                ) {
+                                    AssetDetail.ContentView(asset: asset)
+                                        .platformConstrained()
+                                }
+                                #else
+                                $0.presentation(
+                                    transition: .heroMove,
+                                    isPresented: viewStore.$currentDetailID
+                                        .isPresentAndEqual(to: asset.id)
+                                ) {
+                                    AssetDetail.ContentView(asset: asset)
+                                }
+                                #endif
+                            }
                         }
                     }
                     .padding(10)
@@ -93,14 +110,6 @@ extension Gallery {
                             }
                         }
                     }
-                }
-                .sheet(
-                    store: store.scope(state: \.$detail, action: { .detail($0) }),
-                    state: /Detail.State.assetDetail,
-                    action: Detail.Action.assetDetail
-                ) {
-                    AssetDetail.ContentView(store: $0)
-                        .platformConstrained()
                 }
                 .sheet(
                     store: store.scope(state: \.$detail, action: { .detail($0) }),

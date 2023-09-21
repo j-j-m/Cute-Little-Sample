@@ -1,34 +1,31 @@
 import SwiftUI
 import ComposableArchitecture
 import UI
+import Model
 
-extension AssetDetail {
+enum AssetDetail {
 
     struct ContentView: View {
 
         @Environment(\.isPresented) private var isPresented
         @Environment(\.dismiss) private var dismiss
 
-        let store: StoreOf<AssetDetail>
-
-        @SwiftUI.State private var showImporter = false
+        let asset: Asset
 
         var body: some View {
-            WithViewStore(store, observe: { $0 }) { viewStore in
-                ZStack(alignment: .top) {
-                    AssetImageViewer(asset: viewStore.asset)
+            ZStack(alignment: .top) {
+                AssetImageViewer(asset: asset)
 
-                    HStack {
-                        Spacer()
-                        Button {
-                            dismiss()
-                        } label: {
-                            Image(systemName: "xmark")
-                        }
-                        .buttonStyle(CircularMaterialButtonStyle())
+                HStack {
+                    Spacer()
+                    Button {
+                        dismiss()
+                    } label: {
+                        Image(systemName: "xmark")
                     }
-                    .padding()
+                    .buttonStyle(CircularMaterialButtonStyle())
                 }
+                .padding()
             }
         }
 

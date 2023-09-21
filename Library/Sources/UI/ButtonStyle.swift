@@ -141,7 +141,7 @@ public struct CircularMaterialButtonStyle: ButtonStyle {
     public func makeBody(configuration: Configuration) -> some View {
         configuration.label
             .padding()
-            .foregroundColor(.primary)  // Set your desired color here
+            .foregroundColor(.primary)
             .background(
                 Circle()
                 .fill(Material.ultraThin)
