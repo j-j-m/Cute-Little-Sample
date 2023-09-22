@@ -18,12 +18,14 @@ struct ImageStaging: Reducer {
     }
 
     enum Action: Equatable {
+        case setup
         case confirm
 
         case uploadImages([PlatformImage])
         case finishedUploading
     }
 
+    @Dependency(\.analytics) var analytics
     @Dependency(\.assets) var assets
     @Dependency(\.uuid) var uuid
 
@@ -31,6 +33,9 @@ struct ImageStaging: Reducer {
 
         Reduce { state, action in
             switch action {
+            case .setup:
+                return .none
+                
             case .confirm:
                 return .run { [images = state.images] send in
                     await send(.uploadImages(images.map(\.image)))
@@ -91,5 +96,7 @@ struct ImageStaging: Reducer {
                 return .none
             }
         }
+
+        analyticsReducer
     }
 }

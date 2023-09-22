@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		A067973B2ABE374400EC64B6 /* ImageStagingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A067973A2ABE374400EC64B6 /* ImageStagingTests.swift */; };
+		A067973D2ABE3AC000EC64B6 /* ImageStagingAnalytics.swift in Sources */ = {isa = PBXBuildFile; fileRef = A067973C2ABE3AC000EC64B6 /* ImageStagingAnalytics.swift */; };
 		A071C93C2ABBC37400CEFF7F /* CuteLittleSampleApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = A071C93B2ABBC37400CEFF7F /* CuteLittleSampleApp.swift */; };
 		A071C93E2ABBC37400CEFF7F /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A071C93D2ABBC37400CEFF7F /* ContentView.swift */; };
 		A071C9402ABBC37600CEFF7F /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A071C93F2ABBC37600CEFF7F /* Assets.xcassets */; };
@@ -37,6 +39,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		A067973A2ABE374400EC64B6 /* ImageStagingTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageStagingTests.swift; sourceTree = "<group>"; };
+		A067973C2ABE3AC000EC64B6 /* ImageStagingAnalytics.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageStagingAnalytics.swift; sourceTree = "<group>"; };
 		A071C9382ABBC37400CEFF7F /* CuteLittleSample.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CuteLittleSample.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		A071C93B2ABBC37400CEFF7F /* CuteLittleSampleApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CuteLittleSampleApp.swift; sourceTree = "<group>"; };
 		A071C93D2ABBC37400CEFF7F /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -162,6 +166,7 @@
 			isa = PBXGroup;
 			children = (
 				A071C9642ABBF70A00CEFF7F /* ImageStagingScene.swift */,
+				A067973C2ABE3AC000EC64B6 /* ImageStagingAnalytics.swift */,
 				A071C9662ABBF71600CEFF7F /* ImageStagingView.swift */,
 			);
 			path = ImageStaging;
@@ -172,6 +177,7 @@
 			children = (
 				A0E6C6F42ABD116600E0919B /* Helper */,
 				A07D267B2ABCDDF400A7DAAC /* GalleryTests.swift */,
+				A067973A2ABE374400EC64B6 /* ImageStagingTests.swift */,
 			);
 			path = CuteLittleSampleTests;
 			sourceTree = "<group>";
@@ -288,6 +294,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				A0E6C6F32ABC021800E0919B /* ViewExtensions.swift in Sources */,
+				A067973D2ABE3AC000EC64B6 /* ImageStagingAnalytics.swift in Sources */,
 				A07D26722ABCD00800A7DAAC /* ApplicationAnalytics.swift in Sources */,
 				A071C95D2ABBE25300CEFF7F /* Application.swift in Sources */,
 				A071C9652ABBF70A00CEFF7F /* ImageStagingScene.swift in Sources */,
@@ -307,6 +314,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				A0E6C6F62ABD119A00E0919B /* AccumulatingAnalyticsClient.swift in Sources */,
+				A067973B2ABE374400EC64B6 /* ImageStagingTests.swift in Sources */,
 				A07D267C2ABCDDF400A7DAAC /* GalleryTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
