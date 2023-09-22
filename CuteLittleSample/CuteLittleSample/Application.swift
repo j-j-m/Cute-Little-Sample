@@ -20,7 +20,7 @@ struct Application: Reducer {
 
     @Dependency(\.analytics) var analytics
 
-    var body: some Reducer<State, Action> {
+    var body: some ReducerOf<Application> {
         EmptyReducer()
             .forEach(\.stack, action: /Action.stack) {
                 Path()
