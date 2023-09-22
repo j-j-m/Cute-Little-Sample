@@ -37,11 +37,15 @@ final class GalleryTests: XCTestCase {
 
         await store.send(.setup)
 
-        await store.receive(.loadAssets) {
+        await store.receive(.loadAssets)
+
+        await store.receive(.binding(.set(\.$requestInFlight, true))) {
             $0.requestInFlight = true
         }
 
-        await store.receive(.handleLoadAssets(.success([]))) {
+        await store.receive(.handleLoadAssets(.success([])))
+
+        await store.receive(.binding(.set(\.$requestInFlight, false))) {
             $0.requestInFlight = false
         }
 
@@ -83,13 +87,18 @@ final class GalleryTests: XCTestCase {
 
         await store.send(.setup)
 
-        await store.receive(.loadAssets) {
+        await store.receive(.loadAssets)
+
+        await store.receive(.binding(.set(\.$requestInFlight, true))) {
             $0.requestInFlight = true
         }
 
         await store.receive(.handleLoadAssets(.success(expected))) {
-            $0.requestInFlight = false
             $0.assets = expected
+        }
+
+        await store.receive(.binding(.set(\.$requestInFlight, false))) {
+            $0.requestInFlight = false
         }
 
         XCTAssertEqual(
@@ -133,13 +142,18 @@ final class GalleryTests: XCTestCase {
 
         await store.send(.setup)
 
-        await store.receive(.loadAssets) {
+        await store.receive(.loadAssets)
+
+        await store.receive(.binding(.set(\.$requestInFlight, true))) {
             $0.requestInFlight = true
         }
 
         await store.receive(.handleLoadAssets(.failure(TestError()))) {
-            $0.requestInFlight = false
             $0.error = true
+        }
+
+        await store.receive(.binding(.set(\.$requestInFlight, false))) {
+            $0.requestInFlight = false
         }
 
         XCTAssertEqual(
