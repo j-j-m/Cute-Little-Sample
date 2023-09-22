@@ -25,20 +25,6 @@ extension Gallery {
             self.store = store
         }
 
-        var status: some View {
-            WithViewStore(store, observe: { $0 }) { viewStore in
-                VStack {
-                    if viewStore.requestInFlight {
-                        ProgressView()
-                    } else if viewStore.error {
-                        Text("Something went wrong.")
-                    } else {
-                        Text("Nothing here. Add some images...")
-                    }
-                }
-            }
-        }
-
         var body: some View {
             WithViewStore(store, observe: { $0 }) { viewStore in
                 ZStack {
@@ -96,11 +82,15 @@ extension Gallery {
                             }
                             .padding(10)
                         }
+                    } else if viewStore.requestInFlight {
+                        ProgressView()
+                    } else if viewStore.error {
+                        Text("Something went wrong.")
                     } else {
-                        status
-                            .frame(maxWidth: .infinity, maxHeight: .infinity)
+                        Text("Nothing here. Add some images...")
                     }
                 }
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
                 .toolbar {
                     ToolbarItemGroup {
                         PhotosPicker(
