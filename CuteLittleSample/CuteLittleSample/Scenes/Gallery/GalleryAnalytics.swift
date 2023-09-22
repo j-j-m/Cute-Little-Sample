@@ -1,5 +1,6 @@
 import ComposableArchitecture
 import Analytics
+import CustomDump
 
 extension Gallery {
 
@@ -21,7 +22,7 @@ extension Gallery {
                             .init(
                                 name: "gallery-load-assets-failure",
                                 properties: [
-                                    "error": error.localizedDescription
+                                    "error": String(customDumping: error)
                                 ]
                             )
                         )

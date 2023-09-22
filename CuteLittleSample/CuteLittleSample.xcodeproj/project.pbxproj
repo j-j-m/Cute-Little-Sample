@@ -23,6 +23,7 @@
 		A07D26742ABCD28200A7DAAC /* GalleryAnalytics.swift in Sources */ = {isa = PBXBuildFile; fileRef = A07D26732ABCD28200A7DAAC /* GalleryAnalytics.swift */; };
 		A07D267C2ABCDDF400A7DAAC /* GalleryTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A07D267B2ABCDDF400A7DAAC /* GalleryTests.swift */; };
 		A0E6C6F32ABC021800E0919B /* ViewExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0E6C6F22ABC021800E0919B /* ViewExtensions.swift */; };
+		A0E6C6F62ABD119A00E0919B /* AccumulatingAnalyticsClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0E6C6F52ABD119A00E0919B /* AccumulatingAnalyticsClient.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -55,6 +56,7 @@
 		A07D26792ABCDDF400A7DAAC /* CuteLittleSampleTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = CuteLittleSampleTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		A07D267B2ABCDDF400A7DAAC /* GalleryTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GalleryTests.swift; sourceTree = "<group>"; };
 		A0E6C6F22ABC021800E0919B /* ViewExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewExtensions.swift; sourceTree = "<group>"; };
+		A0E6C6F52ABD119A00E0919B /* AccumulatingAnalyticsClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccumulatingAnalyticsClient.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -168,9 +170,18 @@
 		A07D267A2ABCDDF400A7DAAC /* CuteLittleSampleTests */ = {
 			isa = PBXGroup;
 			children = (
+				A0E6C6F42ABD116600E0919B /* Helper */,
 				A07D267B2ABCDDF400A7DAAC /* GalleryTests.swift */,
 			);
 			path = CuteLittleSampleTests;
+			sourceTree = "<group>";
+		};
+		A0E6C6F42ABD116600E0919B /* Helper */ = {
+			isa = PBXGroup;
+			children = (
+				A0E6C6F52ABD119A00E0919B /* AccumulatingAnalyticsClient.swift */,
+			);
+			path = Helper;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -295,6 +306,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A0E6C6F62ABD119A00E0919B /* AccumulatingAnalyticsClient.swift in Sources */,
 				A07D267C2ABCDDF400A7DAAC /* GalleryTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
