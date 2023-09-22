@@ -33,7 +33,7 @@ struct Gallery: Reducer {
     struct State: Equatable {
         var assets: IdentifiedArrayOf<Asset> = []
         
-        var requestInFlight = false
+        @BindingState var requestInFlight = false
         var error = false
 
         @BindingState var imageSelection: PhotosPickerItem? = nil
@@ -98,8 +98,8 @@ struct Gallery: Reducer {
                 }
 
             case .loadAssets:
-                state.requestInFlight = true
                 return .run { send in
+                    await send(.binding(.set(\.$requestInFlight, true)))
                     await send(
                         .handleLoadAssets(
                             TaskResult {
@@ -117,8 +117,8 @@ struct Gallery: Reducer {
                 case .failure:
                     state.error = true
                 }
-                state.requestInFlight = false
-                return .none
+
+                return .send(.binding(.set(\.$requestInFlight, false)))
 
             case .stageImages(let images):
                 state.detail = .imageStaging(
