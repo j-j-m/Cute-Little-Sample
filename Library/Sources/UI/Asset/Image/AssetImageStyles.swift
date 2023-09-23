@@ -1,6 +1,8 @@
 import SwiftUI
+import Nuke
 import NukeUI
 import Utility
+import Dependencies
 
 public struct DefaultAssetImageStyle: AssetImageStyle {
 
@@ -18,6 +20,8 @@ public struct DefaultAssetImageStyle: AssetImageStyle {
         EmptyView()
     }
 
+    @Dependency(\.imageAssetCache) var cache
+
     @MainActor public func makeItem(configuration: AssetImageConfiguration) -> some View {
         LazyImage(url: configuration.store.url, transaction: .init(animation: .default)) { state in
             if let image = state.image {
@@ -34,6 +38,11 @@ public struct DefaultAssetImageStyle: AssetImageStyle {
                     .transition(.opacity)
             }
         }
+        .pipeline(
+            ImagePipeline {
+                $0.imageCache = cache.rawValue
+            }
+        )
         .inContext {
             if let onCompletion = configuration.onCompletion {
                 $0.onCompletion(onCompletion)
@@ -72,6 +81,8 @@ public struct DimensionallyConstrainedImageStyle: AssetImageStyle {
         EmptyView()
     }
 
+    @Dependency(\.imageAssetCache) var cache
+
     @MainActor public func makeItem(configuration: AssetImageConfiguration) -> some View {
         LazyImage(url: configuration.store.url, transaction: .init(animation: .easeOut)) { state in
             ZStack {
@@ -89,6 +100,11 @@ public struct DimensionallyConstrainedImageStyle: AssetImageStyle {
             }
             .offset(y: offset)
         }
+        .pipeline(
+            ImagePipeline {
+                $0.imageCache = cache.rawValue
+            }
+        )
         .inContext {
             if let onCompletion = configuration.onCompletion {
                 $0.onCompletion(onCompletion)
@@ -122,6 +138,8 @@ public struct SquareImageStyle: AssetImageStyle {
         EmptyView()
     }
 
+    @Dependency(\.imageAssetCache) var cache
+
     @MainActor public func makeItem(configuration: AssetImageConfiguration) -> some View {
         GeometryReader { proxy in
             LazyImage(url: configuration.store.url, transaction: .init(animation: .default)) { state in
@@ -143,6 +161,11 @@ public struct SquareImageStyle: AssetImageStyle {
                         .aspectRatio(contentMode: .fit)
                 }
             }
+            .pipeline(
+                ImagePipeline {
+                    $0.imageCache = cache.rawValue
+                }
+            )
             .inContext {
                 if let onCompletion = configuration.onCompletion {
                     $0.onCompletion(onCompletion)

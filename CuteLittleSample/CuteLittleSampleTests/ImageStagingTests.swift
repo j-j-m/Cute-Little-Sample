@@ -72,7 +72,7 @@ final class ImageStagingTests: XCTestCase {
 
         let eventStore = AnalyticsClient.TestEventStore()
 
-        let subjectImages: IdentifiedArrayOf<ImageStaging.ImageContainer> = [
+        let subjectImages: IdentifiedArrayOf<ImageStaging.ImageReference> = [
             .init(id: uploadID, image: testImage)
         ]
 

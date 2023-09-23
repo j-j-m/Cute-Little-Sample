@@ -6,14 +6,14 @@ import Utility
 
 struct ImageStaging: Reducer {
 
-    struct ImageContainer: Equatable, Identifiable {
+    struct ImageReference: Equatable, Identifiable {
         let id: UUID
         let image: PlatformImage
         var uploadProgress: Progress? = nil
     }
 
     struct State: Equatable {
-        var images: IdentifiedArrayOf<ImageContainer>
+        var images: IdentifiedArrayOf<ImageReference>
 
         var uploadProgress: Progress?
     }

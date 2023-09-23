@@ -1,24 +1,42 @@
 import Foundation
 
-public struct Asset: Codable, Hashable, Identifiable {
+public struct Asset: Decodable, Hashable, Identifiable {
+
+    public enum Locator: Hashable {
+        case fileURL(URL)
+        case remote(bucketId: String, path: String, fileType: String)
+    }
+
     public let id: UUID
-    public let bucketId: String
-    public let path: String
-    public let fileType: String
+    public let locator: Locator
 //    let metadata: [String: AnyCodable]? // Using AnyCodable to handle arbitrary JSON data
 
     public enum CodingKeys: String, CodingKey {
         case id
+        case fileType = "file_type"
         case bucketId = "bucket_id"
         case path
-        case fileType = "file_type"
     }
 
-    public init(id: UUID, bucketId: String, path: String, fileType: String) {
+    public init(from decoder: Decoder) throws {
+            let container = try decoder.container(keyedBy: CodingKeys.self)
+            self.id = try container.decode(UUID.self, forKey: .id)
+
+            // Try to decode properties specific to a `remote` asset
+            if let bucketId = try? container.decode(String.self, forKey: .bucketId),
+               let path = try? container.decode(String.self, forKey: .path),
+               let fileType = try? container.decode(String.self, forKey: .fileType) {
+                self.locator = .remote(bucketId: bucketId, path: path, fileType: fileType)
+            } else {
+                // Handle the other case here, e.g., a file URL.
+                // For the sake of the example, we will throw an error.
+                throw DecodingError.dataCorrupted(DecodingError.Context(codingPath: container.codingPath, debugDescription: "Data doesn't match any known format"))
+            }
+        }
+
+    public init(id: UUID, locator: Locator) {
         self.id = id
-        self.bucketId = bucketId
-        self.path = path
-        self.fileType = fileType
+        self.locator = locator
     }
 }
 
@@ -43,7 +61,7 @@ extension Asset {
     }
 }
 
-public struct AssetContainer: Codable, Hashable, Identifiable {
+public struct AssetContainer: Decodable, Hashable, Identifiable {
 
     public let id: UUID
     public let asset: Asset
