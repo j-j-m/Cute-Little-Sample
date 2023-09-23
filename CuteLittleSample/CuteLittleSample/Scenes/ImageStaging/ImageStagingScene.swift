@@ -14,7 +14,7 @@ struct ImageStaging: Reducer {
     struct State: Equatable {
         let images: IdentifiedArrayOf<ImageContainer>
 
-        var uploadProgress: Progress?
+        var uploadProgress: UploadProgress?
     }
 
     enum Action: Equatable {
@@ -43,7 +43,7 @@ struct ImageStaging: Reducer {
 
             case .uploadImages(let images):
                 let overallProgress = Progress(totalUnitCount: Int64(images.count)) // Total files
-                state.uploadProgress = overallProgress
+                state.uploadProgress = UploadProgress(rawValue: overallProgress)
 
                 return .run { send in
                     try await withThrowingTaskGroup(of: Void.self) { group in

@@ -36,6 +36,9 @@ extension ImageStaging {
                 return .run { _ in
                     await analytics.track(.init(name: "image-staging-finished-upload"))
                 }
+
+            default:
+                return .none
             }
         }
     }

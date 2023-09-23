@@ -31,7 +31,7 @@ extension ImageStaging {
                     VStack(spacing: 0) {
                         HStack {
                             if let progress = viewStore.uploadProgress {
-                                ProgressView(progress)
+                                ProgressView(progress.rawValue)
                                     .transition(.opacity.animation(.easeInOut))
                             } else {
                                 Text("Confirm")

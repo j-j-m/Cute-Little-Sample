@@ -73,6 +73,10 @@ let package = Package(
         .package(
             url: "https://github.com/pointfreeco/swift-custom-dump.git",
             from: "1.1.0"
+        ),
+        .package(
+            url: "https://github.com/pointfreeco/swift-tagged.git",
+            from: "0.10.0"
         )
     ],
     targets: [
@@ -109,7 +113,10 @@ let package = Package(
             dependencies: ["Library"]
         ),
         .target(
-            name: "Model"
+            name: "Model",
+            dependencies: [
+                .product(name: "Tagged", package: "swift-tagged"),
+            ]
         ),
         .target(
             name: "Networking",

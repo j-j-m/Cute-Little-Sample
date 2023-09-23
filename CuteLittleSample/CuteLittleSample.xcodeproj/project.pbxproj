@@ -9,6 +9,8 @@
 /* Begin PBXBuildFile section */
 		A067973B2ABE374400EC64B6 /* ImageStagingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A067973A2ABE374400EC64B6 /* ImageStagingTests.swift */; };
 		A067973D2ABE3AC000EC64B6 /* ImageStagingAnalytics.swift in Sources */ = {isa = PBXBuildFile; fileRef = A067973C2ABE3AC000EC64B6 /* ImageStagingAnalytics.swift */; };
+		A067973F2ABE4BDD00EC64B6 /* AssetUploadSimulator.swift in Sources */ = {isa = PBXBuildFile; fileRef = A067973E2ABE4BDD00EC64B6 /* AssetUploadSimulator.swift */; };
+		A06797412ABE6B1800EC64B6 /* ImageGeneration.swift in Sources */ = {isa = PBXBuildFile; fileRef = A06797402ABE6B1800EC64B6 /* ImageGeneration.swift */; };
 		A071C93C2ABBC37400CEFF7F /* CuteLittleSampleApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = A071C93B2ABBC37400CEFF7F /* CuteLittleSampleApp.swift */; };
 		A071C93E2ABBC37400CEFF7F /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A071C93D2ABBC37400CEFF7F /* ContentView.swift */; };
 		A071C9402ABBC37600CEFF7F /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A071C93F2ABBC37600CEFF7F /* Assets.xcassets */; };
@@ -41,6 +43,8 @@
 /* Begin PBXFileReference section */
 		A067973A2ABE374400EC64B6 /* ImageStagingTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageStagingTests.swift; sourceTree = "<group>"; };
 		A067973C2ABE3AC000EC64B6 /* ImageStagingAnalytics.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageStagingAnalytics.swift; sourceTree = "<group>"; };
+		A067973E2ABE4BDD00EC64B6 /* AssetUploadSimulator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AssetUploadSimulator.swift; sourceTree = "<group>"; };
+		A06797402ABE6B1800EC64B6 /* ImageGeneration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageGeneration.swift; sourceTree = "<group>"; };
 		A071C9382ABBC37400CEFF7F /* CuteLittleSample.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CuteLittleSample.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		A071C93B2ABBC37400CEFF7F /* CuteLittleSampleApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CuteLittleSampleApp.swift; sourceTree = "<group>"; };
 		A071C93D2ABBC37400CEFF7F /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -186,6 +190,8 @@
 			isa = PBXGroup;
 			children = (
 				A0E6C6F52ABD119A00E0919B /* AccumulatingAnalyticsClient.swift */,
+				A067973E2ABE4BDD00EC64B6 /* AssetUploadSimulator.swift */,
+				A06797402ABE6B1800EC64B6 /* ImageGeneration.swift */,
 			);
 			path = Helper;
 			sourceTree = "<group>";
@@ -313,8 +319,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A06797412ABE6B1800EC64B6 /* ImageGeneration.swift in Sources */,
 				A0E6C6F62ABD119A00E0919B /* AccumulatingAnalyticsClient.swift in Sources */,
 				A067973B2ABE374400EC64B6 /* ImageStagingTests.swift in Sources */,
+				A067973F2ABE4BDD00EC64B6 /* AssetUploadSimulator.swift in Sources */,
 				A07D267C2ABCDDF400A7DAAC /* GalleryTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
