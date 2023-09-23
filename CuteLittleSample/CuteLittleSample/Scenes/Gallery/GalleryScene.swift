@@ -18,7 +18,7 @@ struct Gallery: Reducer {
             case imageStaging(ImageStaging.State)
         }
 
-        public enum Action  {
+        public enum Action: Equatable  {
             case imageStaging(ImageStaging.Action)
         }
 
@@ -33,6 +33,7 @@ struct Gallery: Reducer {
     struct State: Equatable {
         var assets: IdentifiedArrayOf<Asset> = []
         
+        var awaitingInitialLoad = true
         @BindingState var requestInFlight = false
         var error = false
 
@@ -43,12 +44,13 @@ struct Gallery: Reducer {
         @BindingState var currentDetailID: Asset.ID?
     }
 
-    enum Action: BindableAction {
+    enum Action: Equatable, BindableAction {
 
-        enum Alert {
+        enum Alert: Equatable {
             case tappedOkay
         }
 
+        case setup
         case binding(BindingAction<State>)
 
         case detail(PresentationAction<Detail.Action>)
@@ -62,9 +64,10 @@ struct Gallery: Reducer {
         case tappedAsset(Asset)
         case tappedDeleteAsset(Asset)
 
-        case handleDeleteAssets(TaskResult<Void>)
+        case handleDeleteAssets(TaskResult<Asset>)
     }
 
+    @Dependency(\.analytics) var analytics
     @Dependency(\.uuid) var uuid
     @Dependency(\.assets) var assets
     @Dependency(\.haptics) var haptics
@@ -75,6 +78,10 @@ struct Gallery: Reducer {
 
         Reduce { state, action in
             switch action {
+
+            case .setup:
+                return .send(.loadAssets)
+                
             case .binding(\.$imageSelection):
                 return .run { [imageSelection = state.imageSelection] send in
                     guard let imageSelection else {
@@ -117,7 +124,7 @@ struct Gallery: Reducer {
                 case .failure:
                     state.error = true
                 }
-
+                state.awaitingInitialLoad = false
                 return .send(.binding(.set(\.$requestInFlight, false)))
 
             case .stageImages(let images):
@@ -177,5 +184,7 @@ struct Gallery: Reducer {
         .ifLet(\.$detail, action: /Action.detail) {
             Detail()
         }
+
+        analyticsReducer
     }
 }

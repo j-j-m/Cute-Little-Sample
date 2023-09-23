@@ -86,7 +86,7 @@ extension Gallery {
                         ProgressView()
                     } else if viewStore.error {
                         Text("Something went wrong.")
-                    } else {
+                    } else if viewStore.awaitingInitialLoad == false {
                         Text("Nothing here. Add some images...")
                     }
                 }
@@ -146,7 +146,7 @@ extension Gallery {
                     store: self.store.scope(state: \.$alert, action: { .alert($0) })
                 )
                 .task {
-                    store.send(.loadAssets)
+                    store.send(.setup)
                 }
             }
         }

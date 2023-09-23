@@ -68,6 +68,9 @@ extension ImageStaging {
                         .background(Material.bar)
                     }
                 }
+                .task {
+                    viewStore.send(.setup)
+                }
             }
         }
     }

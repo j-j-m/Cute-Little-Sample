@@ -9,21 +9,25 @@ struct ImageStaging: Reducer {
     struct ImageContainer: Equatable, Identifiable {
         let id: UUID
         let image: PlatformImage
+        var uploadProgress: Progress? = nil
     }
 
     struct State: Equatable {
-        let images: IdentifiedArrayOf<ImageContainer>
+        var images: IdentifiedArrayOf<ImageContainer>
 
         var uploadProgress: Progress?
     }
 
-    enum Action {
+    enum Action: Equatable {
+        case setup
         case confirm
 
-        case uploadImages([PlatformImage])
+        case uploadImages
+        case updateProgress(UUID, Double)
         case finishedUploading
     }
 
+    @Dependency(\.analytics) var analytics
     @Dependency(\.assets) var assets
     @Dependency(\.uuid) var uuid
 
@@ -31,27 +35,24 @@ struct ImageStaging: Reducer {
 
         Reduce { state, action in
             switch action {
+            case .setup:
+                return .none
+                
             case .confirm:
-                return .run { [images = state.images] send in
-                    await send(.uploadImages(images.map(\.image)))
-                }
+                return .send(.uploadImages)
 
-            case .uploadImages(let images):
+            case .uploadImages:
+                let images = state.images
                 let overallProgress = Progress(totalUnitCount: Int64(images.count)) // Total files
                 state.uploadProgress = overallProgress
 
                 return .run { send in
                     try await withThrowingTaskGroup(of: Void.self) { group in
                         for image in images {
-                            let fileUploadProgress = Progress(
-                                totalUnitCount: 100,
-                                parent: overallProgress,
-                                pendingUnitCount: 1
-                            ) // Assuming each upload progress goes from 0 to 100
 
                             group.addTask {
-                                if let imageData = image.pngDataRepresentation() {
-                                    let fileUUID = uuid()
+                                if let imageData = image.image.pngDataRepresentation() {
+                                    let fileUUID = image.id
                                     let upload = try await assets.createAssetUpload(
                                         fileUUID,
                                         StorageClient.UploadRequest.File(
@@ -65,8 +66,7 @@ struct ImageStaging: Reducer {
                                     for try await event in upload {
                                         switch event {
                                         case .updateProgress(let progress):
-                                            // Assuming progress is a value between 0 and 1
-                                            fileUploadProgress.completedUnitCount = Int64(progress * 100)
+                                            await send(.updateProgress(fileUUID, progress))
 
                                         case .success(let asset):
                                             // Handle individual success if needed
@@ -86,10 +86,26 @@ struct ImageStaging: Reducer {
                     await send(.finishedUploading)
                 }
 
+            case .updateProgress(let id, let progress):
+                if state.images[id: id]?.uploadProgress == nil,
+                let uploadProgress = state.uploadProgress {
+                    state.images[id: id]?.uploadProgress = Progress(
+                        totalUnitCount: 100,
+                        parent: uploadProgress,
+                        pendingUnitCount: 1
+                    )
+                }
+                // Assuming progress is a value between 0 and 1
+                state.images[id: id]?.uploadProgress?.completedUnitCount = Int64(progress * 100)
+
+                return .none
+
             case .finishedUploading:
                 state.uploadProgress = nil
                 return .none
             }
         }
+
+        analyticsReducer
     }
 }
