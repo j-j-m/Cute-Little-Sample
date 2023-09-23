@@ -43,7 +43,9 @@ final class GalleryTests: XCTestCase {
             $0.requestInFlight = true
         }
 
-        await store.receive(.handleLoadAssets(.success([])))
+        await store.receive(.handleLoadAssets(.success([]))) {
+            $0.awaitingInitialLoad = false
+        }
 
         await store.receive(.binding(.set(\.$requestInFlight, false))) {
             $0.requestInFlight = false
@@ -95,6 +97,7 @@ final class GalleryTests: XCTestCase {
 
         await store.receive(.handleLoadAssets(.success(expected))) {
             $0.assets = expected
+            $0.awaitingInitialLoad = false
         }
 
         await store.receive(.binding(.set(\.$requestInFlight, false))) {
@@ -150,6 +153,7 @@ final class GalleryTests: XCTestCase {
 
         await store.receive(.handleLoadAssets(.failure(TestError()))) {
             $0.error = true
+            $0.awaitingInitialLoad = false
         }
 
         await store.receive(.binding(.set(\.$requestInFlight, false))) {

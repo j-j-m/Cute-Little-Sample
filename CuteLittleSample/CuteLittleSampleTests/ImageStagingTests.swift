@@ -89,16 +89,60 @@ final class ImageStagingTests: XCTestCase {
 
         await store.send(.confirm)
 
+        // Progress (aka NSProgress) conforms to equatable, but having class semantics makes equality checking difficult
+        // so turn off exhaustivity
         store.exhaustivity = .off
-        await store.receive(.uploadImages(subjectImages.map(\.image))) {
+
+        await store.receive(.uploadImages) {
             XCTAssertEqual($0.uploadProgress?.completedUnitCount, 0)
         }
 
         uploadSimulator.send(action: .simulateProgress(0.25))
 
-        XCTAssertEqual(store.state.uploadProgress?.fractionCompleted, 0.25)
+        await store.receive(
+            .updateProgress(
+                uploadID,
+                0.25
+            )
+        ) {
+            XCTAssertEqual(
+                $0.images[id: uploadID]!.uploadProgress?.fractionCompleted,
+                0.25
+            )
+        }
 
+        uploadSimulator.send(action: .simulateProgress(0.5))
+
+        await store.receive(
+            .updateProgress(
+                uploadID,
+                0.5
+            )
+        ) {
+            XCTAssertEqual(
+                $0.images[id: uploadID]!.uploadProgress?.fractionCompleted,
+                0.5
+            )
+        }
+
+        uploadSimulator.send(action: .simulateProgress(1.0))
+
+        await store.receive(
+            .updateProgress(
+                uploadID,
+                1.0
+            )
+        ) {
+            XCTAssertEqual(
+                $0.images[id: uploadID]!.uploadProgress?.fractionCompleted,
+                1.0
+            )
+        }
+
+        // everything else from here can be exhaustively exercised
         store.exhaustivity = .on
+
+        uploadSimulator.send(action: .completeUpload)
 
         await store.receive(.finishedUploading) {
             $0.uploadProgress = nil
@@ -112,7 +156,7 @@ final class ImageStagingTests: XCTestCase {
                     name: "image-staging-started-upload",
                     properties: [
                         "image-count": 1,
-                        "total-size": 0.0
+                        "total-size": 0.010207176208496094
                     ]
                 ),
                 .init(name: "image-staging-finished-upload")

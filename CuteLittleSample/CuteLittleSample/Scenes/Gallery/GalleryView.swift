@@ -86,7 +86,7 @@ extension Gallery {
                         ProgressView()
                     } else if viewStore.error {
                         Text("Something went wrong.")
-                    } else {
+                    } else if viewStore.awaitingInitialLoad == false {
                         Text("Nothing here. Add some images...")
                     }
                 }

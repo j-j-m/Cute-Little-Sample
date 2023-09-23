@@ -17,9 +17,10 @@ extension ImageStaging {
                     await analytics.track(.init(name: "image-staging-tapped-confirm"))
                 }
 
-            case .uploadImages(let images):
+            case .uploadImages:
+                let images = state.images
                 let count = images.count
-                let sizeInMB = images.compactMap(\.pngSizeInMB).reduce(0, +)
+                let sizeInMB = images.compactMap(\.image.pngSizeInMB).reduce(0, +)
                 return .run { _ in
                     await analytics.track(
                         .init(

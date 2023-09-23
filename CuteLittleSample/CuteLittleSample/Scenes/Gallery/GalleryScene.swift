@@ -33,6 +33,7 @@ struct Gallery: Reducer {
     struct State: Equatable {
         var assets: IdentifiedArrayOf<Asset> = []
         
+        var awaitingInitialLoad = true
         @BindingState var requestInFlight = false
         var error = false
 
@@ -123,7 +124,7 @@ struct Gallery: Reducer {
                 case .failure:
                     state.error = true
                 }
-
+                state.awaitingInitialLoad = false
                 return .send(.binding(.set(\.$requestInFlight, false)))
 
             case .stageImages(let images):
