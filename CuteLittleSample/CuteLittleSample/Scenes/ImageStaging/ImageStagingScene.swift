@@ -53,7 +53,6 @@ struct ImageStaging: Reducer {
                         for ref in references {
                             
                             group.addTask {
-                                let r =  imageAssetCache.totalCount
                                 if let image = imageAssetCache.rawValue[.init(request: .init(url: ref.url))],
                                    let imageData = image.image.pngDataRepresentation() {
                                     let fileUUID = ref.id
