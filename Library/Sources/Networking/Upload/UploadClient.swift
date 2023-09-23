@@ -22,7 +22,6 @@ extension UploadClient: DependencyKey {
         var client = UploadClient()
         client.upload = { url, info, data in
 
-
             let upload = Upload(id: uuid(), info: info, data: data)
             await uploadManager.register(upload)
 

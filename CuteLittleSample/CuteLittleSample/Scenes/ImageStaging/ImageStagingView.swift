@@ -18,10 +18,19 @@ extension ImageStaging {
                             columns: 3,
                             spacing: 10
                         ){
-                            ForEach(viewStore.images) {
-                                Image(platformImage: $0.image)
+                            ForEach(viewStore.images) { item in
+                                Image(platformImage: item.image)
                                     .resizable()
                                     .aspectRatio(contentMode: .fit)
+                                    .overlay {
+                                        if let progress = item.uploadProgress {
+                                            Color.gray.shimmering()
+                                            ProgressView(progress)
+                                                .labelsHidden()
+                                                .progressViewStyle(.circular)
+                                                .transition(.opacity.animation(.easeInOut))
+                                        }
+                                    }
                             }
                         }
                         .padding([.horizontal, .bottom])
