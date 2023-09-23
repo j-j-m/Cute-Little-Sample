@@ -10,6 +10,7 @@ import XCTest
 import Analytics
 import Model
 import Platform
+import Utility
 import CustomDump
 import Tagged
 @testable import CuteLittleSample
@@ -156,7 +157,7 @@ final class ImageStagingTests: XCTestCase {
                     name: "image-staging-started-upload",
                     properties: [
                         "image-count": 1,
-                        "total-size": 0.010207176208496094
+                        "total-size": OS.current == .macOS ? 0.010207176208496094 : 0.016974449157714844
                     ]
                 ),
                 .init(name: "image-staging-finished-upload")
