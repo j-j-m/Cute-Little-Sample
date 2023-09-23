@@ -40,9 +40,11 @@ class AssetUploadSimulator {
                         id: id,
                         asset: .init(
                             id: assetID,
-                            bucketId: "test",
-                            path: "test/test",
-                            fileType: ".png"
+                            locator: .remote(
+                                bucketId: "test",
+                                path: "test/test",
+                                fileType: ".png"
+                            )
                         )
                     )
                 )

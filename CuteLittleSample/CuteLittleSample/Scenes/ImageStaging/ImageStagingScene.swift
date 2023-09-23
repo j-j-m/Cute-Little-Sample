@@ -8,12 +8,12 @@ struct ImageStaging: Reducer {
 
     struct ImageReference: Equatable, Identifiable {
         let id: UUID
-        let image: PlatformImage
+        let url: URL
         var uploadProgress: Progress? = nil
     }
 
     struct State: Equatable {
-        var images: IdentifiedArrayOf<ImageReference>
+        var references: IdentifiedArrayOf<ImageReference>
 
         var uploadProgress: Progress?
     }
@@ -31,6 +31,8 @@ struct ImageStaging: Reducer {
     @Dependency(\.assets) var assets
     @Dependency(\.uuid) var uuid
 
+    @Dependency(\.imageAssetCache) var imageAssetCache
+
     var body: some Reducer<State, Action> {
 
         Reduce { state, action in
@@ -42,17 +44,19 @@ struct ImageStaging: Reducer {
                 return .send(.uploadImages)
 
             case .uploadImages:
-                let images = state.images
-                let overallProgress = Progress(totalUnitCount: Int64(images.count)) // Total files
+                let references = state.references
+                let overallProgress = Progress(totalUnitCount: Int64(references.count)) // Total files
                 state.uploadProgress = overallProgress
 
                 return .run { send in
                     try await withThrowingTaskGroup(of: Void.self) { group in
-                        for image in images {
-
+                        for ref in references {
+                            
                             group.addTask {
-                                if let imageData = image.image.pngDataRepresentation() {
-                                    let fileUUID = image.id
+                                let r =  imageAssetCache.totalCount
+                                if let image = imageAssetCache.rawValue[.init(request: .init(url: ref.url))],
+                                   let imageData = image.image.pngDataRepresentation() {
+                                    let fileUUID = ref.id
                                     let upload = try await assets.createAssetUpload(
                                         fileUUID,
                                         StorageClient.UploadRequest.File(
@@ -87,16 +91,16 @@ struct ImageStaging: Reducer {
                 }
 
             case .updateProgress(let id, let progress):
-                if state.images[id: id]?.uploadProgress == nil,
+                if state.references[id: id]?.uploadProgress == nil,
                 let uploadProgress = state.uploadProgress {
-                    state.images[id: id]?.uploadProgress = Progress(
+                    state.references[id: id]?.uploadProgress = Progress(
                         totalUnitCount: 100,
                         parent: uploadProgress,
                         pendingUnitCount: 1
                     )
                 }
                 // Assuming progress is a value between 0 and 1
-                state.images[id: id]?.uploadProgress?.completedUnitCount = Int64(progress * 100)
+                state.references[id: id]?.uploadProgress?.completedUnitCount = Int64(progress * 100)
 
                 return .none
 

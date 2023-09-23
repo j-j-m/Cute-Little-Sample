@@ -112,24 +112,24 @@ extension Gallery {
                             case .failure(let error):
                                 print("Error selecting file \(error.localizedDescription)")
                             case .success(let urls):
-                                var images: [PlatformImage] = []
+//                                var images: [PlatformImage] = []
+//
+//                                for url in urls {
+//                                    print("selected url = \(url)")
+//
+//                                    do {
+//                                        if url.startAccessingSecurityScopedResource() {
+//                                            let data = try Data(contentsOf: url)
+//                                            if let image = PlatformImage(data: data) {
+//                                                images.append(image)
+//                                            }
+//                                        }
+//                                    } catch let error {
+//                                        print("Error reading file \(error.localizedDescription)")
+//                                    }
+//                                }
 
-                                for url in urls {
-                                    print("selected url = \(url)")
-
-                                    do {
-                                        if url.startAccessingSecurityScopedResource() {
-                                            let data = try Data(contentsOf: url)
-                                            if let image = PlatformImage(data: data) {
-                                                images.append(image)
-                                            }
-                                        }
-                                    } catch let error {
-                                        print("Error reading file \(error.localizedDescription)")
-                                    }
-                                }
-
-                                viewStore.send(.stageImages(images))
+                                viewStore.send(.processFiles(urls))
                             }
                         }
                     }

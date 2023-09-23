@@ -18,9 +18,14 @@ extension ImageStaging {
                 }
 
             case .uploadImages:
-                let images = state.images
-                let count = images.count
-                let sizeInMB = images.compactMap(\.image.pngSizeInMB).reduce(0, +)
+                let references = state.references
+                let count = references.count
+                let sizeInMB = references.compactMap {
+                    imageAssetCache.rawValue[.init(request: .init(url: $0.url))]?
+                        .image
+                        .pngSizeInMB
+                }
+                    .reduce(0, +)
                 return .run { _ in
                     await analytics.track(
                         .init(

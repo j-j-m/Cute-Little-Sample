@@ -13,6 +13,7 @@ import Platform
 import Utility
 import CustomDump
 import Tagged
+import Nuke
 @testable import CuteLittleSample
 
 @MainActor
@@ -21,11 +22,12 @@ final class ImageStagingTests: XCTestCase {
     func testSetup() async throws {
 
         let id = UUID(uuidString: "DEADBEEF-0000-0000-0000-000000000000")!
+        let assetURL = URL(string: "www.test.com/image_id")!
 
         let eventStore = AnalyticsClient.TestEventStore()
 
         let store = TestStore(
-            initialState: ImageStaging.State(images: [.init(id: id, image: .init())])
+            initialState: ImageStaging.State(references: [.init(id: id, url: assetURL)])
         ) {
             ImageStaging()
         } withDependencies: {
@@ -46,10 +48,15 @@ final class ImageStagingTests: XCTestCase {
 
         let uploadID = UUID(uuidString: "DEADBEEF-0000-0000-0000-000000000000")!
         let assetID = UUID(uuidString: "DEADBEEF-BEEF-0000-0000-000000000000")!
+        let assetURL = URL(string: "file://image_id.png")!
+
         let testImage = generateCheckerboardImage(
             size: CGSize(width: 200, height: 200),
             squareSize: 20
         )
+
+        let testImageCache = ImageCache()
+        testImageCache[.init(request: .init(url: assetURL))] = .init(image: testImage)
 
         let uploadSimulator = AssetUploadSimulator(
             id: uploadID,
@@ -73,12 +80,12 @@ final class ImageStagingTests: XCTestCase {
         let eventStore = AnalyticsClient.TestEventStore()
 
         let subjectImages: IdentifiedArrayOf<ImageStaging.ImageReference> = [
-            .init(id: uploadID, image: testImage)
+            .init(id: uploadID, url: assetURL)
         ]
 
         let store = TestStore(
             initialState: ImageStaging.State(
-                images: subjectImages
+                references: subjectImages
             )
         ) {
             ImageStaging()
@@ -86,6 +93,7 @@ final class ImageStagingTests: XCTestCase {
             $0.assets = testAssetClient
             $0.analytics = .accumulating(in: eventStore)
             $0.uuid = .init({ uploadID })
+            $0.imageAssetCache = .init(testImageCache)
         }
 
         await store.send(.confirm)
@@ -107,7 +115,11 @@ final class ImageStagingTests: XCTestCase {
             )
         ) {
             XCTAssertEqual(
-                $0.images[id: uploadID]!.uploadProgress?.fractionCompleted,
+                $0.references[id: uploadID]!.uploadProgress?.fractionCompleted,
+                0.25
+            )
+            XCTAssertEqual(
+                $0.uploadProgress?.fractionCompleted,
                 0.25
             )
         }
@@ -121,7 +133,11 @@ final class ImageStagingTests: XCTestCase {
             )
         ) {
             XCTAssertEqual(
-                $0.images[id: uploadID]!.uploadProgress?.fractionCompleted,
+                $0.references[id: uploadID]!.uploadProgress?.fractionCompleted,
+                0.5
+            )
+            XCTAssertEqual(
+                $0.uploadProgress?.fractionCompleted,
                 0.5
             )
         }
@@ -135,7 +151,11 @@ final class ImageStagingTests: XCTestCase {
             )
         ) {
             XCTAssertEqual(
-                $0.images[id: uploadID]!.uploadProgress?.fractionCompleted,
+                $0.references[id: uploadID]!.uploadProgress?.fractionCompleted,
+                1.0
+            )
+            XCTAssertEqual(
+                $0.uploadProgress?.fractionCompleted,
                 1.0
             )
         }

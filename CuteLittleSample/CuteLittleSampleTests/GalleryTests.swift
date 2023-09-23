@@ -65,7 +65,7 @@ final class GalleryTests: XCTestCase {
         let id = UUID(uuidString: "DEADBEEF-0000-0000-0000-000000000000")!
 
         let expected: IdentifiedArrayOf<Asset> = [
-            Asset(id: id, bucketId: "test", path: "test", fileType: "png")
+            Asset(id: id, locator: .remote(bucketId: "test", path: "test", fileType: "png"))
         ]
 
         let testAssetClient = {
