@@ -12,8 +12,27 @@ extension AnalyticsClient {
     class TestEventStore {
         var events: [Event] = []
 
+        // Append an event to the end of the list
         func append(event: Event) {
             events.append(event)
+        }
+
+        // Remove and return the first event
+        func pop() -> Event? {
+            guard !events.isEmpty else {
+                return nil
+            }
+            return events.removeFirst()
+        }
+
+        // Check the first event without removing it
+        func peek() -> Event? {
+            return events.first
+        }
+
+        // Check if the queue is empty
+        var isEmpty: Bool {
+            return events.isEmpty
         }
     }
 
@@ -30,3 +49,4 @@ extension AnalyticsClient {
        return client
    }
 }
+

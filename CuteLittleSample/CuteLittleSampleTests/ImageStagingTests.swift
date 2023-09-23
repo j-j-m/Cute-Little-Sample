@@ -149,19 +149,16 @@ final class ImageStagingTests: XCTestCase {
             $0.uploadProgress = nil
         }
 
-        XCTAssertEqual(
-            eventStore.events,
-            [
-                .init(name: "image-staging-tapped-confirm"),
-                .init(
-                    name: "image-staging-started-upload",
-                    properties: [
-                        "image-count": 1,
-                        "total-size": OS.current == .macOS ? 0.010207176208496094 : 0.016974449157714844
-                    ]
-                ),
-                .init(name: "image-staging-finished-upload")
-            ]
-        )
+        XCTAssertEqual(eventStore.pop(), .init(name: "image-staging-tapped-confirm"))
+
+        let uploadEvent = eventStore.pop()
+        XCTAssertEqual(uploadEvent?.name, "image-staging-started-upload")
+        XCTAssertEqual(uploadEvent?.properties["image-count"], 1)
+
+        // Image size differs based on the test runner machine. It is sufficient to check that the field is populated.
+        XCTAssertNotNil(uploadEvent?.properties["total-size"])
+        XCTAssertNotEqual(uploadEvent?.properties["image-count"], 0)
+
+        XCTAssertEqual(eventStore.pop(), .init(name: "image-staging-finished-upload"))
     }
 }
