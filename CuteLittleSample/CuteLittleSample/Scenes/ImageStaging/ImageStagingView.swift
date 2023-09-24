@@ -18,12 +18,15 @@ extension ImageStaging {
                             columns: 3,
                             spacing: 10
                         ){
-                            ForEach(viewStore.images) { item in
-                                Image(platformImage: item.image)
-                                    .resizable()
-                                    .aspectRatio(contentMode: .fit)
+                            ForEach(viewStore.references) { item in
+                                AssetImageView(asset: .init(id: item.id, locator: .fileURL(item.url)))
+                                    .cornerRadius(10)
                                     .overlay {
-                                        if let progress = item.uploadProgress {
+                                        if item.completed {
+                                            Image(systemName: "check")
+                                                .foregroundStyle(.green)
+                                                .transition(.scale)
+                                        } else if let progress = item.uploadProgress {
                                             Color.gray.shimmering()
                                             ProgressView(progress)
                                                 .labelsHidden()

@@ -116,13 +116,19 @@ public class AssetStore: ObservableObject {
             self.url = nil
             return
         }
-        self.url = try? storage.getPublicURL(
-            .init(
-                bucketID: asset.bucketId,
-                path: asset.path,
-                transform: transform
+
+        switch asset.locator {
+        case .fileURL(let url):
+            self.url = url
+        case .remote(let bucketId, let path, let fileType):
+            self.url = try? storage.getPublicURL(
+                .init(
+                    bucketID: bucketId,
+                    path: path,
+                    transform: transform
+                )
             )
-        )
+        }
     }
 
 }

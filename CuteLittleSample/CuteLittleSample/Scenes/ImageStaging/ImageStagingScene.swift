@@ -6,14 +6,15 @@ import Utility
 
 struct ImageStaging: Reducer {
 
-    struct ImageContainer: Equatable, Identifiable {
+    struct ImageReference: Equatable, Identifiable {
         let id: UUID
-        let image: PlatformImage
+        let url: URL
         var uploadProgress: Progress? = nil
+        var completed = false
     }
 
     struct State: Equatable {
-        var images: IdentifiedArrayOf<ImageContainer>
+        var references: IdentifiedArrayOf<ImageReference>
 
         var uploadProgress: Progress?
     }
@@ -24,12 +25,16 @@ struct ImageStaging: Reducer {
 
         case uploadImages
         case updateProgress(UUID, Double)
+        case finishedUpload(UUID)
+
         case finishedUploading
     }
 
     @Dependency(\.analytics) var analytics
     @Dependency(\.assets) var assets
     @Dependency(\.uuid) var uuid
+
+    @Dependency(\.imageAssetCache) var imageAssetCache
 
     var body: some Reducer<State, Action> {
 
@@ -42,41 +47,57 @@ struct ImageStaging: Reducer {
                 return .send(.uploadImages)
 
             case .uploadImages:
-                let images = state.images
-                let overallProgress = Progress(totalUnitCount: Int64(images.count)) // Total files
+                let references = state.references
+                let overallProgress = Progress(totalUnitCount: Int64(references.count)) // Total files
                 state.uploadProgress = overallProgress
 
                 return .run { send in
                     try await withThrowingTaskGroup(of: Void.self) { group in
-                        for image in images {
-
+                        for ref in references {
                             group.addTask {
-                                if let imageData = image.image.pngDataRepresentation() {
-                                    let fileUUID = image.id
-                                    let upload = try await assets.createAssetUpload(
-                                        fileUUID,
-                                        StorageClient.UploadRequest.File(
-                                            name: "\(fileUUID)",
-                                            data: imageData,
-                                            fileName: "\(fileUUID).png",
-                                            contentType: "image/png"
+                                if let image = imageAssetCache.rawValue[.init(request: .init(url: ref.url))] {
+
+                                    // Determine the file type from the URL
+                                    let fileExtension = ref.url.pathExtension.lowercased()
+                                    let contentType: String
+                                    var imageData: Data?
+
+                                    switch fileExtension {
+                                    case "gif":
+                                        imageData = try? Data(contentsOf: ref.url)
+                                        contentType = "image/gif"
+
+                                    default:
+                                        imageData = image.image.pngDataRepresentation()
+                                        contentType = "image/png"
+                                    }
+
+                                    if let imageData = imageData {
+                                        let fileUUID = ref.id
+                                        let upload = try await assets.createAssetUpload(
+                                            fileUUID,
+                                            StorageClient.UploadRequest.File(
+                                                name: "\(fileUUID)",
+                                                data: imageData,
+                                                fileName: "\(fileUUID).\(fileExtension)",
+                                                contentType: contentType
+                                            )
                                         )
-                                    )
 
-                                    for try await event in upload {
-                                        switch event {
-                                        case .updateProgress(let progress):
-                                            await send(.updateProgress(fileUUID, progress))
-
-                                        case .success(let asset):
-                                            // Handle individual success if needed
-//                                            await send(.handleItem(asset))
-                                            break
+                                        for try await event in upload {
+                                            switch event {
+                                            case .updateProgress(let progress):
+                                                await send(.updateProgress(fileUUID, progress))
+                                            case .success(_):
+                                                await send(.finishedUpload(fileUUID))
+                                                break
+                                            }
                                         }
                                     }
                                 }
                             }
                         }
+
 
                         // Wait for all tasks to complete
                         try await group.waitForAll()
@@ -87,17 +108,21 @@ struct ImageStaging: Reducer {
                 }
 
             case .updateProgress(let id, let progress):
-                if state.images[id: id]?.uploadProgress == nil,
+                if state.references[id: id]?.uploadProgress == nil,
                 let uploadProgress = state.uploadProgress {
-                    state.images[id: id]?.uploadProgress = Progress(
+                    state.references[id: id]?.uploadProgress = Progress(
                         totalUnitCount: 100,
                         parent: uploadProgress,
                         pendingUnitCount: 1
                     )
                 }
                 // Assuming progress is a value between 0 and 1
-                state.images[id: id]?.uploadProgress?.completedUnitCount = Int64(progress * 100)
+                state.references[id: id]?.uploadProgress?.completedUnitCount = Int64(progress * 100)
 
+                return .none
+
+            case .finishedUpload(let id):
+                state.references[id: id]?.completed = true
                 return .none
 
             case .finishedUploading:

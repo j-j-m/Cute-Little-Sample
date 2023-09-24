@@ -1,6 +1,8 @@
 import SwiftUI
+import Nuke
 import NukeUI
 import Utility
+import Dependencies
 
 public struct DefaultAssetImageStyle: AssetImageStyle {
 
@@ -18,10 +20,18 @@ public struct DefaultAssetImageStyle: AssetImageStyle {
         EmptyView()
     }
 
+    @Dependency(\.imageAssetCache) var cache
+
     @MainActor public func makeItem(configuration: AssetImageConfiguration) -> some View {
         LazyImage(url: configuration.store.url, transaction: .init(animation: .default)) { state in
-            if let image = state.image {
-                image.resizable()
+            if let container = state.imageContainer, container.type ==  .gif, let data = container.data {
+                GIFImage(data: data)
+                    .resizable()
+                    .aspectRatio(contentMode: .fit)
+                    .transition(.opacity)
+            } else if let image = state.image {
+                image
+                    .resizable()
                     .aspectRatio(contentMode: .fit)
                     .transition(.opacity)
             } else if state.isLoading {
@@ -34,6 +44,11 @@ public struct DefaultAssetImageStyle: AssetImageStyle {
                     .transition(.opacity)
             }
         }
+        .pipeline(
+            ImagePipeline {
+                $0.imageCache = cache.rawValue
+            }
+        )
         .inContext {
             if let onCompletion = configuration.onCompletion {
                 $0.onCompletion(onCompletion)
@@ -72,10 +87,19 @@ public struct DimensionallyConstrainedImageStyle: AssetImageStyle {
         EmptyView()
     }
 
+    @Dependency(\.imageAssetCache) var cache
+
     @MainActor public func makeItem(configuration: AssetImageConfiguration) -> some View {
         LazyImage(url: configuration.store.url, transaction: .init(animation: .easeOut)) { state in
             ZStack {
-                if let image = state.image {
+                if let container = state.imageContainer, container.type ==  .gif, let data = container.data {
+                    GIFImage(data: data)
+                        .resizable()
+                        .scaledToFill()
+                        .frame(width: width, height: height)
+                        .clipped()
+                        .transition(.opacity)
+                } else if let image = state.image {
                     image
                         .resizable()
                         .scaledToFill()
@@ -89,6 +113,11 @@ public struct DimensionallyConstrainedImageStyle: AssetImageStyle {
             }
             .offset(y: offset)
         }
+        .pipeline(
+            ImagePipeline {
+                $0.imageCache = cache.rawValue
+            }
+        )
         .inContext {
             if let onCompletion = configuration.onCompletion {
                 $0.onCompletion(onCompletion)
@@ -122,11 +151,22 @@ public struct SquareImageStyle: AssetImageStyle {
         EmptyView()
     }
 
+    @Dependency(\.imageAssetCache) var cache
+
     @MainActor public func makeItem(configuration: AssetImageConfiguration) -> some View {
         GeometryReader { proxy in
             LazyImage(url: configuration.store.url, transaction: .init(animation: .default)) { state in
-                if let image = state.image {
-                    image.resizable().aspectRatio(contentMode: contentMode)
+                if let container = state.imageContainer, container.type ==  .gif, let data = container.data {
+                    GIFImage(data: data)
+                        .resizable()
+                        .aspectRatio(contentMode: contentMode)
+                        .scaledToFill()
+                        .frame(width: proxy.size.width, height: proxy.size.height)
+                        .transition(.opacity)
+                } else if let image = state.image {
+                    image
+                        .resizable()
+                        .aspectRatio(contentMode: contentMode)
                         .frame(width: proxy.size.width, height: proxy.size.height)
                         .transition(.opacity)
                 } else if state.isLoading {
@@ -143,6 +183,11 @@ public struct SquareImageStyle: AssetImageStyle {
                         .aspectRatio(contentMode: .fit)
                 }
             }
+            .pipeline(
+                ImagePipeline {
+                    $0.imageCache = cache.rawValue
+                }
+            )
             .inContext {
                 if let onCompletion = configuration.onCompletion {
                     $0.onCompletion(onCompletion)

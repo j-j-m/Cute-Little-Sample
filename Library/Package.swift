@@ -57,7 +57,14 @@ let package = Package(
             url: "https://github.com/supabase/supabase-swift.git",
             from: "0.3.0"
         ),
-        .package(url: "https://github.com/kean/Nuke.git", from: "12.1.6"),
+        .package(
+            url: "https://github.com/kean/Nuke.git",
+            from: "12.1.6"
+        ),
+        .package(
+            url: "https://github.com/kaishin/Gifu.git",
+            from: "3.4.1"
+        ),
         .package(
             url: "https://github.com/Alamofire/Alamofire.git", 
                 .upToNextMajor(from: "5.7.1")
@@ -141,6 +148,7 @@ let package = Package(
             dependencies: [
                 .product(name: "Dependencies", package: "swift-dependencies"),
                 .product(name: "NukeUI", package: "Nuke"),
+                .product(name: "Gifu", package: "Gifu"),
                 .product(name: "Transmission", package: "Transmission", condition: .when(platforms: [.iOS])),
                 "Haptics",
                 "Platform",

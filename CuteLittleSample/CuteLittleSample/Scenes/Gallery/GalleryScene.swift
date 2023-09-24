@@ -11,6 +11,34 @@ import PhotosUI
 import Model
 import Utility
 
+enum WorkSpaceError: Error {
+    case unknownFormat
+}
+
+private func workspaceSecurityScoped(url: URL) throws -> URL? {
+
+    @Dependency(\.uuid) var uuid
+    guard url.startAccessingSecurityScopedResource() else {
+        return nil
+    }
+
+    let data = try Data(contentsOf: url)
+    guard let image = PlatformImage(data: data) else {
+        return nil
+    }
+
+    guard let imageInfo = imageTypes(from: data) else {
+        print("Unknown image format or corrupted data")
+        throw WorkSpaceError.unknownFormat
+    }
+
+    let tempDirectory = FileManager.default.temporaryDirectory
+    let tempFileURL = tempDirectory.appendingPathComponent(uuid().uuidString).appendingPathExtension(imageInfo.fileExtension)
+    try data.write(to: tempFileURL)  // might want better error handling here
+
+    return tempFileURL
+}
+
 struct Gallery: Reducer {
 
     public struct Detail: Reducer {
@@ -59,7 +87,8 @@ struct Gallery: Reducer {
         case loadAssets
         case handleLoadAssets(TaskResult<IdentifiedArrayOf<Asset>>)
 
-        case stageImages([PlatformImage])
+        case processFiles([URL])
+        case stageImages([ImageStaging.ImageReference])
 
         case tappedAsset(Asset)
         case tappedDeleteAsset(Asset)
@@ -87,15 +116,26 @@ struct Gallery: Reducer {
                     guard let imageSelection else {
                         return
                     }
-                    // unbox the image from data
-                    guard let imageData = try await imageSelection.loadTransferable(type: Data.self),
-                            let image = PlatformImage(data: imageData) else {
+                    guard let imageData = try await imageSelection.loadTransferable(type: Data.self) else {
                         return
                     }
 
+                    guard let imageInfo = imageTypes(from: imageData) else {
+                        print("Unknown image format or corrupted data")
+                        throw WorkSpaceError.unknownFormat
+                    }
+
+                    let tempDirectory = FileManager.default.temporaryDirectory
+                    let tempFileURL = tempDirectory.appendingPathComponent(UUID().uuidString).appendingPathExtension(imageInfo.fileExtension)
+
+                    try? imageData.write(to: tempFileURL)  // Consider better error handling here
+
                     await send(.binding(.set(\.$imageSelection, nil)))
-                    // send it to staging
-                    await send(.stageImages([image]))
+                    await send(
+                        .stageImages(
+                            [.init(id: uuid(), url: tempFileURL)]
+                        )
+                    )
                 }
 
             case .detail(.presented(.imageStaging(.finishedUploading))):
@@ -127,11 +167,23 @@ struct Gallery: Reducer {
                 state.awaitingInitialLoad = false
                 return .send(.binding(.set(\.$requestInFlight, false)))
 
+            case .processFiles(let urls):
+                return .run { send in
+                    let workspaceUrls: [URL] = try await urls.parallelMap(workspaceSecurityScoped).compactMap { $0 }
+
+                    await send(
+                        .stageImages(
+                            workspaceUrls.map { ImageStaging.ImageReference(id: uuid(), url: $0) }
+                        )
+                    )
+                }
+
+
             case .stageImages(let images):
                 state.detail = .imageStaging(
                     .init(
-                        images: .init(
-                            uniqueElements: images.map { .init(id: uuid(), image: $0) }
+                        references: .init(
+                            uniqueElements: images
                         )
                     )
                 )
