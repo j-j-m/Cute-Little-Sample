@@ -63,21 +63,13 @@ struct ImageStaging: Reducer {
                                     var imageData: Data?
 
                                     switch fileExtension {
-                                    case "png":
-                                        imageData = image.image.pngDataRepresentation()
-                                        contentType = "image/png"
-                                    case "jpg", "jpeg":
-                                        imageData = image.image.jpegDataWithQuality(1.0)
-                                        contentType = "image/jpeg"
-
                                     case "gif":
                                         imageData = try? Data(contentsOf: ref.url)
                                         contentType = "image/gif"
 
                                     default:
-                                        // Decide how to handle unknown file types
-                                        print("Unsupported file type: \(fileExtension)")
-                                        return
+                                        imageData = image.image.pngDataRepresentation()
+                                        contentType = "image/png"
                                     }
 
                                     if let imageData = imageData {
