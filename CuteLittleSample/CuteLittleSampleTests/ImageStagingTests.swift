@@ -160,10 +160,14 @@ final class ImageStagingTests: XCTestCase {
             )
         }
 
+        uploadSimulator.send(action: .completeUpload)
+
+        await store.receive(.finishedUpload(uploadID)) {
+            XCTAssertEqual($0.references.first?.completed, true)
+        }
+
         // everything else from here can be exhaustively exercised
         store.exhaustivity = .on
-
-        uploadSimulator.send(action: .completeUpload)
 
         await store.receive(.finishedUploading) {
             $0.uploadProgress = nil
