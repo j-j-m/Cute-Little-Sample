@@ -22,7 +22,11 @@ extension ImageStaging {
                                 AssetImageView(asset: .init(id: item.id, locator: .fileURL(item.url)))
                                     .cornerRadius(10)
                                     .overlay {
-                                        if let progress = item.uploadProgress {
+                                        if item.completed {
+                                            Image(systemName: "check")
+                                                .foregroundStyle(.green)
+                                                .transition(.scale)
+                                        } else if let progress = item.uploadProgress {
                                             Color.gray.shimmering()
                                             ProgressView(progress)
                                                 .labelsHidden()

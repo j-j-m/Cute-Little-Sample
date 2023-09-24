@@ -31,7 +31,7 @@ extension Gallery {
                     if viewStore.assets.isEmpty == false {
                         ScrollView {
                             MasonryVStack(
-                                columns: horizontalSizeClass == .compact ? 2 : 3,
+                                columns: 1,
                                 spacing: 10
                             ){
                                 ForEach(viewStore.assets) { asset in
