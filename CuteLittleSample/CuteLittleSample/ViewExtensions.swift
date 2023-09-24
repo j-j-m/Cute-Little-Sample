@@ -8,7 +8,10 @@ struct PlatformModalConstraintModifier: ViewModifier {
         content
             .inContext { view in
                 #if os(macOS)
-                view.frame(width: 800, height: 500)
+                view.frame(
+                    idealWidth: NSApp.keyWindow?.contentView?.bounds.width ?? 800,
+                    idealHeight: NSApp.keyWindow?.contentView?.bounds.height ?? 500
+                )
                 #else
                 view
                 // .interactiveDismissDisabled(false)
