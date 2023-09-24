@@ -65,8 +65,6 @@ private struct _GIFImage: UIViewRepresentable {
         if isResizable {
             imageView.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
             imageView.setContentCompressionResistancePriority(.defaultLow, for: .vertical)
-            imageView.setContentHuggingPriorityForOrientation(.defaultLow, for: .horizontal)
-            imageView.setContentHuggingPriorityForOrientation(.defaultLow, for: .vertical)
         }
         return imageView
     }
